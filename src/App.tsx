@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, KeyboardEvent } from "react";
 import "./App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -15,8 +15,10 @@ import snowUrl from "./assets/snow.png";
 import cloudUrl from "./assets/cloud.png";
 import mistUrl from "./assets/mist.png";
 
-const APIKey = "API KEY";
+const APIKey = "cb156f794debc5c3d9b19126fc05a33d";
 /** https://openweathermap.org/api */ 
+
+const defaultCity = 'Ростов-на-Дону';
 
 function App() {
   const [imgUrl, setImgUrl] = useState<string>("");
@@ -24,7 +26,8 @@ function App() {
   const [temp, setTemp] = useState<number | null>(null);
   const [humidity, setHumidity] = useState<number | null>(null);
   const [wind, setWind] = useState<string | null>(null);
-  const [city, setCity] = useState("Ростов-на-Дону");
+  const [city, setCity] = useState(defaultCity);
+  const [currentCity, setCurrentCity] = useState(defaultCity);
   const [answerStatus, setAnswerStatus] = useState<number>(200)
 
   const getWetherData = async () => {
@@ -60,6 +63,7 @@ function App() {
       setHumidity(response.data.main.humidity);
       setWind(response.data.wind.speed);
       setAnswerStatus(200);
+      setCurrentCity(city);
     } catch (error) {
       if (error instanceof Error) {
         setAnswerStatus(404);
@@ -73,12 +77,23 @@ function App() {
     getWetherData();
   }, []);
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      getWetherData();
+    }
+  }
+
   return (
     <>
       <div className="container">
         <div className="search-box">
           <FontAwesomeIcon icon={faLocationDot} className="location"></FontAwesomeIcon>
-          <input type="text" placeholder="Ведите название" value={city} onChange={(e)=> setCity((e.target.value).trim())}/>
+          <input type="text" 
+          placeholder="Ведите название" 
+          value={city} 
+          onChange={(e)=> setCity((e.target.value).trim())}
+          onKeyDown={(e) => handleKeyDown(e)}
+          />
           <button onClick={()=>getWetherData()}>
             <FontAwesomeIcon icon={faMagnifyingGlass}></FontAwesomeIcon>
           </button>
@@ -91,6 +106,8 @@ function App() {
         )}
         {answerStatus == 200 && (
           <div className="weather-box fadeIn">
+          <div className="titleBox">{currentCity}</div>
+            <hr />
             <img src={imgUrl} />
             <p className="temperature">
               {temp}

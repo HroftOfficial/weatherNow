@@ -78,7 +78,7 @@ body{
 }
 
 .weather-box img{
-  width: 60%;
+  width: 50%;
   margin-top: 30px;
 }
 
@@ -195,3 +195,12 @@ body{
 .location {
   font-size: 1.4rem;
 }
+
+.titleBox {
+  display: flex;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 2rem;
+  padding-top: 20px;
+  text-transform: capitalize;
+    }
